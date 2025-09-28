@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "./components/sidebar/app-sidebar";
 import { ThemeToggle } from "./components/theme-toggle";
 import ProvidersWithNoSsr from "./components/providers-with-no-ssr";
+import Providers from "./components/Providers";
 import Breadcrumbs from "./components/Breadcrumbs";
 
 const interSans = Inter({
@@ -41,38 +38,32 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${interSans.variable} ${jetBrainsMono.variable} ${sansSerif4.variable} antialiased`}
+      suppressHydrationWarning={true}
     >
       <body>
-        <ProvidersWithNoSsr>
+        <Providers>
           <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
               <header className="flex h-16 shrink-0 items-center gap-2 transition-[width, height] ease-linear group-has-data-[collasible=icon]/sidebar-wrapper:h-12 p-3">
                 <div className="flex items-center gap-2">
                   <SidebarTrigger className="-ml-1" />
-                  <Separator
-                    orientation="vertical"
-                    className="mr-2 data-[orientation=vertical]:h-4"
-                  />
+                  <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
                   <div className="flex items-center gap-3">
                     <div className="hidden sm:block">
                       <Breadcrumbs />
                     </div>
                   </div>
                 </div>
-                <div className="ml-auto flex items-center gap-4 px-4">
-                  {/* spacer */}
-                </div>
+                <div className="ml-auto flex items-center gap-4 px-4">{/* spacer */}</div>
                 <div className="flex flex-1 items-center justify-end">
                   <ThemeToggle />
                 </div>
               </header>
-              <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                {children}
-              </div>
+              <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
             </SidebarInset>
           </SidebarProvider>
-        </ProvidersWithNoSsr>
+        </Providers>
       </body>
     </html>
   );

@@ -1,14 +1,19 @@
 "use client";
 
 import { ThemeProvider, ThemeProviderProps } from "next-themes";
+import { ConvexClientProvider } from "./ConvexClientProvider";
 
 const props: ThemeProviderProps = {
-  attribute: "class",
+  attribute: "data-theme",
   defaultTheme: "system",
   enableSystem: true,
   themes: ["light", "dark"],
 };
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  return <ThemeProvider {...props}>{children}</ThemeProvider>;
+  return (
+    <ConvexClientProvider>
+      <ThemeProvider {...props}>{children}</ThemeProvider>
+    </ConvexClientProvider>
+  );
 }

@@ -1,5 +1,27 @@
 import { Button } from "@/components/ui/button";
 import AddRoleSheet from "./components/AddRoleSheet";
+import RolesTable, { type Role } from "./components/RolesTable";
+
+const sampleRoles: Role[] = [
+  {
+    id: "role-1",
+    name: "Admin",
+    description: "Full access to all resources",
+    permissions: ["read", "write", "delete"],
+  },
+  {
+    id: "role-2",
+    name: "Editor",
+    description: "Can edit content",
+    permissions: ["read", "write"],
+  },
+  {
+    id: "role-3",
+    name: "Viewer",
+    description: "Read-only access",
+    permissions: ["read"],
+  },
+];
 
 export default function RolesPage() {
   return (
@@ -12,7 +34,9 @@ export default function RolesPage() {
         <AddRoleSheet />
       </div>
 
-      <ul className="mt-4 divide-y rounded-md border">{/* Future implementation for listing roles can go here */}</ul>
+      <div className="mt-4">
+        <RolesTable roles={sampleRoles} />
+      </div>
     </div>
   );
 }
