@@ -1,15 +1,30 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { AppSidebar } from "./components/sidebar/app-sidebar";
+import { ThemeToggle } from "./components/theme-toggle";
+import ProvidersWithNoSsr from "./components/providers-with-no-ssr";
+import Breadcrumbs from "./components/Breadcrumbs";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const interSans = Inter({
+  variable: "--font-inter-sans",
+  subsets: ["latin"],
+});
+const jetBrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const sansSerif4 = Source_Serif_4({
+  variable: "--font-source-serif-4",
   subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -23,11 +38,41 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    <html
+      lang="en"
+      className={`${interSans.variable} ${jetBrainsMono.variable} ${sansSerif4.variable} antialiased`}
+    >
+      <body>
+        <ProvidersWithNoSsr>
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <header className="flex h-16 shrink-0 items-center gap-2 transition-[width, height] ease-linear group-has-data-[collasible=icon]/sidebar-wrapper:h-12 p-3">
+                <div className="flex items-center gap-2">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator
+                    orientation="vertical"
+                    className="mr-2 data-[orientation=vertical]:h-4"
+                  />
+                  <div className="flex items-center gap-3">
+                    <div className="hidden sm:block">
+                      <Breadcrumbs />
+                    </div>
+                  </div>
+                </div>
+                <div className="ml-auto flex items-center gap-4 px-4">
+                  {/* spacer */}
+                </div>
+                <div className="flex flex-1 items-center justify-end">
+                  <ThemeToggle />
+                </div>
+              </header>
+              <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                {children}
+              </div>
+            </SidebarInset>
+          </SidebarProvider>
+        </ProvidersWithNoSsr>
       </body>
     </html>
   );
