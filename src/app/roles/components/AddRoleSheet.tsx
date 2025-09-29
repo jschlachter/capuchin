@@ -22,6 +22,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 const PERMISSIONS = [
   "user:create",
@@ -35,16 +38,41 @@ const PERMISSIONS = [
 ];
 
 export default function AddRoleSheet() {
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const roleSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name must be 50 characters or less"),
+    // make description optional and coerce empty string to undefined
+    description: z.string().max(250).optional(),
+    permissions: z.array(z.string()).min(1, "Select at least one permission"),
+    enabled: z.boolean().optional(),
+  });
 
-  function togglePermission(permission: string) {
-    setSelected((prev) => (prev.includes(permission) ? prev.filter((p) => p !== permission) : [...prev, permission]));
-  }
+  type RoleForm = z.infer<typeof roleSchema>;
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<RoleForm>({
+    resolver: zodResolver(roleSchema),
+    defaultValues: { name: "", description: "", permissions: [], enabled: true },
+  });
+
+  const permissions = watch("permissions") || [];
 
   function removePermission(permission: string) {
-    setSelected((prev) => prev.filter((p) => p !== permission));
+    setValue(
+      "permissions",
+      permissions.filter((p) => p !== permission)
+    );
   }
 
+  const onSubmit: SubmitHandler<RoleForm> = (data) => {
+    // TODO: replace with real API call to create role
+    // For now just log the validated data
+    console.log("Create role", data);
+  };
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -55,7 +83,7 @@ export default function AddRoleSheet() {
           <SheetTitle>Add New Role</SheetTitle>
           <SheetDescription>Fill in the details below to create a new role.</SheetDescription>
         </SheetHeader>
-        <form className="p-4 flex flex-col gap-3 space-y-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-4 flex flex-col gap-3 space-y-3">
           <div className="flex flex-col gap-2">
             <label
               htmlFor="role-name"
@@ -63,7 +91,8 @@ export default function AddRoleSheet() {
             >
               Name
             </label>
-            <Input id="role-name" placeholder="Enter role name" />
+            <Input id="role-name" placeholder="Enter role name" {...register("name")} />
+            {errors.name ? <p className="text-sm text-destructive">{String(errors.name.message)}</p> : null}
           </div>
           <div className="flex flex-col gap-2">
             <label
@@ -72,7 +101,15 @@ export default function AddRoleSheet() {
             >
               Description
             </label>
-            <Textarea id="role-description" placeholder="Enter a description for this role" rows={4} />
+            <Textarea
+              id="role-description"
+              placeholder="Enter a description for this role"
+              rows={4}
+              {...register("description")}
+            />
+            {errors.description ? (
+              <p className="text-sm text-destructive">{String(errors.description.message)}</p>
+            ) : null}
           </div>
 
           {/* Permissions selection (multi-select dropdown with pills) */}
@@ -89,8 +126,18 @@ export default function AddRoleSheet() {
                       {PERMISSIONS.map((perm) => (
                         <DropdownMenuCheckboxItem
                           key={perm}
-                          checked={selected.includes(perm)}
-                          onCheckedChange={() => togglePermission(perm)}
+                          checked={permissions.includes(perm)}
+                          onCheckedChange={(checked) => {
+                            const current = permissions || [];
+                            if (checked) {
+                              if (!current.includes(perm)) setValue("permissions", [...current, perm]);
+                            } else {
+                              setValue(
+                                "permissions",
+                                current.filter((p: string) => p !== perm)
+                              );
+                            }
+                          }}
                         >
                           {perm}
                         </DropdownMenuCheckboxItem>
@@ -101,10 +148,10 @@ export default function AddRoleSheet() {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {selected.length === 0 ? (
+                {permissions.length === 0 ? (
                   <span className="text-sm text-muted-foreground">No permissions selected</span>
                 ) : (
-                  selected.map((perm) => (
+                  permissions.map((perm) => (
                     <span key={perm} className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-sm">
                       <span className="truncate">{perm}</span>
                       <button
@@ -118,26 +165,30 @@ export default function AddRoleSheet() {
                     </span>
                   ))
                 )}
+                {errors.permissions ? (
+                  <p className="text-sm text-destructive">{String(errors.permissions.message)}</p>
+                ) : null}
               </div>
             </div>
           </div>
 
           {/* Enabled toggle can go here */}
           <div className="flex items-center space-x-2">
-            <input type="checkbox" id="role-enabled" className="h-4 w-4" defaultChecked />
+            <input type="checkbox" id="role-enabled" className="h-4 w-4" {...register("enabled")} />
             <label htmlFor="role-enabled" className="text-sm font-medium">
               Enabled
             </label>
           </div>
+
+          <SheetFooter>
+            <div className="flex items-center justify-end gap-2">
+              <SheetClose asChild>
+                <Button>Cancel</Button>
+              </SheetClose>
+              <Button type="submit">Save</Button>
+            </div>
+          </SheetFooter>
         </form>
-        <SheetFooter>
-          <div className="flex items-center justify-end gap-2">
-            <SheetClose asChild>
-              <Button type="submit">Cancel</Button>
-            </SheetClose>
-            <Button type="submit">Save</Button>
-          </div>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
