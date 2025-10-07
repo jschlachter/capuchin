@@ -25,6 +25,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { api } from "../../../../convex/_generated/api";
+import { useMutation } from "convex/react";
 
 const PERMISSIONS = [
   "user:create",
@@ -38,6 +40,8 @@ const PERMISSIONS = [
 ];
 
 export default function AddRoleSheet() {
+  const createRole = useMutation(api.roles.createRole);
+
   const roleSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name must be 50 characters or less"),
     // make description optional and coerce empty string to undefined
@@ -68,10 +72,14 @@ export default function AddRoleSheet() {
     );
   }
 
-  const onSubmit: SubmitHandler<RoleForm> = (data) => {
-    // TODO: replace with real API call to create role
-    // For now just log the validated data
-    console.log("Create role", data);
+  const onSubmit: SubmitHandler<RoleForm> = async (data) => {
+    // Call the Convex mutation to create the role and log the result
+    try {
+      const id = await createRole(data);
+      console.log("Create role", data, "->", id);
+    } catch (err) {
+      console.error("Failed to create role", err);
+    }
   };
   return (
     <Sheet>

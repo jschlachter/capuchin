@@ -1,11 +1,12 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 
-const createRole = mutation({
+export const createRole = mutation({
   args: {
     name: v.string(),
-    description: v.string(),
+    description: v.optional(v.string()),
     permissions: v.array(v.string()),
+    enabled: v.boolean(),
   },
   handler: async (ctx, args) => {
     const existingRole = await ctx.db
@@ -26,5 +27,3 @@ const createRole = mutation({
     return roleId;
   },
 });
-
-export default { createRole };

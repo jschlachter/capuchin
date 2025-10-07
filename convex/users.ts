@@ -1,7 +1,7 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 
-const createUser = mutation({
+export const createUser = mutation({
   args: {
     externalId: v.string(),
     firstName: v.string(),
@@ -58,5 +58,3 @@ const createUser = mutation({
     return userId;
   },
 });
-
-export default { createUser };
