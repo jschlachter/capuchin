@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ 'main' ]
+  pull_request:
+    branches: [ 'main' ]
+  workflow_dispatch: {}
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --reporter=silent
+
+      - name: Run lint
+        run: pnpm lint
+
+      - name: Build
+        env:
+          NODE_ENV: production
+        run: pnpm build
