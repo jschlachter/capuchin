@@ -35,7 +35,8 @@ export default defineSchema({
   }),
   roles: defineTable({
     name: v.string(),
-    description: v.string(),
+    description: v.optional(v.string()),
     permissions: v.array(v.string()),
+    enabled: v.boolean(),
   }),
 });

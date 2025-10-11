@@ -1,6 +1,10 @@
 "use client";
 
 import * as React from "react";
+
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+
 import {
   ColumnDef,
   flexRender,
@@ -30,7 +34,9 @@ type Props = {
   roles: Role[];
 };
 
-export default function RolesTable({ roles }: Props) {
+export default function RolesTable(props) {
+  const roles = useQuery(api.roles.get) || [];
+
   const [globalFilter, setGlobalFilter] = React.useState<string>("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
 

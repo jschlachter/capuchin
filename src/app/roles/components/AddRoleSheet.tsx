@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -57,11 +57,14 @@ export default function AddRoleSheet() {
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<RoleForm>({
     resolver: zodResolver(roleSchema),
     defaultValues: { name: "", description: "", permissions: [], enabled: true },
   });
+
+  const [open, setOpen] = useState(false);
 
   const permissions = watch("permissions") || [];
 
@@ -75,14 +78,19 @@ export default function AddRoleSheet() {
   const onSubmit: SubmitHandler<RoleForm> = async (data) => {
     // Call the Convex mutation to create the role and log the result
     try {
-      const id = await createRole(data);
+      // Ensure enabled is a boolean (Convex mutation requires boolean)
+      const payload = { ...data, enabled: Boolean(data.enabled) } as RoleForm & { enabled: boolean };
+      const id = await createRole(payload);
       console.log("Create role", data, "->", id);
+      // On success: reset the form to default values and close the sheet
+      reset({ name: "", description: "", permissions: [], enabled: true });
+      setOpen(false);
     } catch (err) {
       console.error("Failed to create role", err);
     }
   };
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline">Add Role</Button>
       </SheetTrigger>
