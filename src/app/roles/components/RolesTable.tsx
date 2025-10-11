@@ -24,7 +24,7 @@ import Pill from "@/components/ui/pill";
 import { matchSorter } from "match-sorter";
 
 export type Role = {
-  id: string;
+  _id: string;
   name: string;
   description?: string | null;
   permissions: string[];
