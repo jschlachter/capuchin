@@ -8,6 +8,14 @@
 - Static assets (SVGs, icons) are in `public/`.
 - Tailwind CSS is used for styling, with global styles in `src/app/globals.css`.
 
+## Commit Messages
+
+- Use present tense ("Add feature" not "Added feature")
+- Include the area or component affected
+- Keep under 72 characters
+- Use imperative mood ("Fix bug" not "Fixes bug")
+- Be concise and descriptive
+
 ## Styling
 
 - Tailwind CSS with consistent color palette
