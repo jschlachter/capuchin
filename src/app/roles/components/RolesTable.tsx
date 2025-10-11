@@ -34,7 +34,7 @@ type Props = {
   roles: Role[];
 };
 
-export default function RolesTable(props) {
+export default function RolesTable() {
   const roles = useQuery(api.roles.get) || [];
 
   const [globalFilter, setGlobalFilter] = React.useState<string>("");
