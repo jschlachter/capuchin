@@ -24,7 +24,7 @@ import Pill from "@/components/ui/pill";
 import { matchSorter } from "match-sorter";
 
 export type Role = {
-  id: string;
+  _id: string;
   name: string;
   description?: string | null;
   permissions: string[];
@@ -34,7 +34,7 @@ type Props = {
   roles: Role[];
 };
 
-export default function RolesTable(props) {
+export default function RolesTable() {
   const roles = useQuery(api.roles.get) || [];
 
   const [globalFilter, setGlobalFilter] = React.useState<string>("");

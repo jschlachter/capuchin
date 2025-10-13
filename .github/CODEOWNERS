@@ -1,0 +1,25 @@
+# CODEOWNERS file for the capuchin repository
+
+# Lines starting with '#' are comments. Each pattern is followed by one or more owners.
+
+# Default owner for the entire repository
+
+- @jschlachter
+
+# Owners for specific areas (optional, add more as needed)
+
+# Docs and workflows
+
+.github/ @jschlachter
+
+# Source code
+
+src/\*\* @jschlachter
+
+# Convex backend code
+
+convex/\*\* @jschlachter
+
+# Public assets
+
+public/\*\* @jschlachter
