@@ -1,5 +1,9 @@
 name: CI
 
+permissions:
+  contents: read
+  pull-requests: write
+
 on:
   push:
     branches: ["main"]
@@ -46,4 +50,5 @@ jobs:
       - name: Build
         env:
           NODE_ENV: production
+          NEXT_PUBLIC_CONVEX_URL: ${{ secrets.NEXT_PUBLIC_CONVEX_URL }}
         run: pnpm build
