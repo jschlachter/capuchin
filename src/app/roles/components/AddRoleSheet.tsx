@@ -92,7 +92,7 @@ export default function AddRoleSheet() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline">Add Role</Button>
+        <Button variant="default">Add Role</Button>
       </SheetTrigger>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
