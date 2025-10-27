@@ -1,17 +1,12 @@
 name: Deploy Capuchin To Preview
 env: 
-    VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+    VERCEL_ORG_ID: ${{ secrets.VERCEL_TEAM_ID }}
     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     TARGET_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
 on:
     push:
-        branches: [main]
-    pull_request:
-      types: [
-        opened,
-        synchronize,
-        ready_for_review
-      ]
+        branches-ignore: 
+          - main
     workflow_dispatch: {}
 
 permissions:
@@ -30,7 +25,8 @@ jobs:
             - name: Pull Vercel Environment Information
               run: vercel pull --yes \
                 --environment=${{ env.TARGET_ENV }} \
-                --token=${{ secrets.VERCEL_TOKEN }} \
-                --scope=${{ env.VERCEL_TEAM_ID }}
+                --token=${{ secrets.VERCEL_TOKEN }}
             - name: Build Project Artifacts
-              run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+              run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+            - name: Deploy Project Artifacts to Vercel
+              run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} #Skip the build step on Vercel and upload the previously generated .vercel/output folder from the GitHub Action
