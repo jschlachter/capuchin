@@ -9,14 +9,15 @@ on:
           - main
     workflow_dispatch: {}
 
+concurrency:
+  group: deploy-preview-${{ github.ref_name || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
-  pull-requests: write
   deployments: write
   
 jobs:
-    Build:
-        uses: ./.github/workflows/ci.yml
     Deploy-Preview:
         runs-on: ubuntu-latest
         steps:
@@ -26,6 +27,18 @@ jobs:
               uses: actions/setup-node@v4
               with:
                 node-version: "18.x"
+                cache: "pnpm"
+            - name: Install pnpm
+              run: |
+                corepack enable
+                corepack prepare pnpm@latest --activate
+            - name: Cache pnpm store
+              uses: actions/cache@v4
+              with:
+                path: ~/.pnpm-store
+                key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                restore-keys: |
+                  ${{ runner.os }}-pnpm-store-
             - name: Install Vercel CLI
               run: npm install -g vercel@latest
             - name: Pull Vercel Environment Information
@@ -33,4 +46,9 @@ jobs:
             - name: Build Project Artifacts
               run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
             - name: Deploy Project Artifacts to Vercel
-              run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} #Skip the build step on Vercel and upload the previously generated .vercel/output folder from the GitHub Action
+              id: vercel_deploy
+              run: |
+                DEPLOY_OUTPUT=$(vercel deploy --prebuilt --token=${VERCEL_TOKEN} --confirm 2>&1)
+                echo "$DEPLOY_OUTPUT"
+                DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -Eo 'https://[a-z0-9.-]+vercel.app' | head -1 || true)
+                echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
