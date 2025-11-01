@@ -50,7 +50,7 @@ jobs:
             - name: Deploy Project Artifacts to Vercel
               id: vercel_deploy
               run: |
-                DEPLOY_OUTPUT=$(vercel deploy --prebuilt --token=${VERCEL_TOKEN} --confirm 2>&1)
+                DEPLOY_OUTPUT=$(vercel deploy --prebuilt --token=${{secrets.VERCEL_TOKEN}} --confirm 2>&1)
                 echo "$DEPLOY_OUTPUT"
                 DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -Eo 'https://[a-z0-9.-]+vercel.app' | head -1 || true)
                 echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
