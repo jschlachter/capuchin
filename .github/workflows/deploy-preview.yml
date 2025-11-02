@@ -5,9 +5,11 @@ env:
     TARGET_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
     NEXT_PUBLIC_CONVEX_URL: ${{ secrets.NEXT_PUBLIC_CONVEX_URL }}
 on:
-    push:
-        branches-ignore: 
-          - main
+    workflow_run:
+      workflows: ["CI"]
+      types:
+        - completed
+      branches-ignore: ["main"]
     workflow_dispatch: {}
 
 concurrency:
@@ -22,6 +24,8 @@ permissions:
 jobs:
     Deploy-Preview:
         runs-on: ubuntu-latest
+
+        if: github.event.workflow_run.conclusion == 'success' # Only deploy if the preceding workflow was successful
 
         steps:
             - name: Checkout
