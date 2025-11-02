@@ -36,9 +36,11 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
             - name: Debug TARGET_ENV and event
+              env:
+                WORKFLOW_RUN_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch || '<<none>>' }}
               run: |
                 echo "GITHUB_EVENT_NAME=${{ github.event_name }}"
-                echo "WORKFLOW_RUN_HEAD_BRANCH=${{ github.event.workflow_run.head_branch || '<<none>>' }}"
+                echo "WORKFLOW_RUN_HEAD_BRANCH=$WORKFLOW_RUN_HEAD_BRANCH"
                 echo "REF_NAME=${{ github.ref_name || '<<none>>' }}"
                 echo "COMPUTED_TARGET_ENV=$TARGET_ENV"
             - name: Set up Node.js
