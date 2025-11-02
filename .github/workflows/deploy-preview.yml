@@ -2,7 +2,7 @@ name: Deploy Capuchin To Preview
 env: 
     VERCEL_ORG_ID: ${{ secrets.VERCEL_TEAM_ID }}
     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-    TARGET_ENV: ${{ github.event.workflow_run.head_branch == 'refs/heads/main' && 'production' || 'preview' }}
+    TARGET_ENV: ${{ github.event.workflow_run.head_branch == 'main' && 'production' || 'preview' }}
     NEXT_PUBLIC_CONVEX_URL: ${{ secrets.NEXT_PUBLIC_CONVEX_URL }}
 on:
     workflow_run:
