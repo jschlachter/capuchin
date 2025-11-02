@@ -9,6 +9,7 @@ on:
       workflows: ["CI"]
       types:
         - completed
+      branches-ignore: ["main"]
     # This workflow is normally triggered by the completion of the CI workflow.
     # Re-add manual dispatch so humans can trigger deploys via the Actions UI.
     # Manual dispatches are still restricted to non-main branches by the job `if` below.
