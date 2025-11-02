@@ -1,13 +1,13 @@
 name: CI
 
 on:
-  workflow_call: 
+  push:
+    branches: 
+      - main
   pull_request:
-    branches: ["main"]
     types: [
       opened,
       reopened,
-      closed,
       synchronize,
       ready_for_review,
       labeled,
