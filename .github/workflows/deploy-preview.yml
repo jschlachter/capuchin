@@ -61,13 +61,13 @@ jobs:
             - name: Install Vercel CLI
               run: npm install -g vercel@latest
             - name: Pull Vercel Environment Information
-              run: vercel pull --yes --environment=${{ env.TARGET_ENV }} --token=${{ secrets.VERCEL_TOKEN }}
+              run: vercel pull --yes --environment=$TARGET_ENV --token=${{ secrets.VERCEL_TOKEN }}
             - name: Build Project Artifacts
               run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
             - name: Deploy Project Artifacts to Vercel
               id: vercel_deploy
               run: |
-                DEPLOY_OUTPUT=$(vercel deploy --prebuilt --target=${{ env.TARGET_ENV }} --token=${{secrets.VERCEL_TOKEN}} --yes 2>&1)
+                DEPLOY_OUTPUT=$(vercel deploy --prebuilt --target=$TARGET_ENV --token=${{secrets.VERCEL_TOKEN}} --yes 2>&1)
                 echo "$DEPLOY_OUTPUT"
                 DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -Eo 'https://[a-z0-9.-]+vercel.app' | head -1 || true)
                 echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
